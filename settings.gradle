@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "w4d1_Class_KotlinJikan"
