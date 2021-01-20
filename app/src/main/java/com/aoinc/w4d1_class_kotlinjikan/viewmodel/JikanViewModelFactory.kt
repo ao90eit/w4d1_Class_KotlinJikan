@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 
 object JikanViewModelFactory : ViewModelProvider.Factory {
 
-    private val viewModel: JikanViewModel = JikanViewModel()
+    var viewModel: JikanViewModel? = JikanViewModel()
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return viewModel as T
     }

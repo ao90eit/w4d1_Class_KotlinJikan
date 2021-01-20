@@ -31,4 +31,9 @@ class JikanViewModel : ViewModel() {
                 })
         )
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        JikanViewModelFactory.viewModel = null
+    }
 }

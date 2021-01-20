@@ -1,5 +1,6 @@
 package com.aoinc.w4d1_class_kotlinjikan.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.aoinc.w4d1_class_kotlinjikan.R
+import com.aoinc.w4d1_class_kotlinjikan.util.Constants
 import com.aoinc.w4d1_class_kotlinjikan.viewmodel.JikanViewModel
 import com.aoinc.w4d1_class_kotlinjikan.viewmodel.JikanViewModelFactory
 
@@ -38,5 +40,14 @@ class JikanFragment : Fragment() {
         viewModel.jikanLiveData.observe(viewLifecycleOwner, Observer {
             resultTextView.text = "Result size is ${it.size}"
         })
+
+        sendBroadcastButton.setOnClickListener {
+            context?.let {
+                // before you send this, ALSO add stuff to it
+                it.sendBroadcast(Intent(Constants.FRAGMENT_BROADCAST_ACTION).also {
+                    it.putExtra("nonsense", "Kowabunga!")
+                })
+            }
+        }
     }
 }

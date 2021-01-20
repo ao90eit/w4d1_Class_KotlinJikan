@@ -1,12 +1,21 @@
 package com.aoinc.w4d1_class_kotlinjikan.view
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.SyncStateContract
 import android.text.Editable
+import android.text.Layout
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -14,11 +23,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.aoinc.w4d1_class_kotlinjikan.R
 import com.aoinc.w4d1_class_kotlinjikan.model.JikanResult
+import com.aoinc.w4d1_class_kotlinjikan.util.Constants
 import com.aoinc.w4d1_class_kotlinjikan.view.adapter.JikanRecyclerViewAdapter
 import com.aoinc.w4d1_class_kotlinjikan.viewmodel.JikanViewModel
 import com.aoinc.w4d1_class_kotlinjikan.viewmodel.JikanViewModelFactory
 import org.w3c.dom.Text
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,6 +37,27 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: JikanViewModel by viewModels<JikanViewModel>( factoryProducer = {
         JikanViewModelFactory
     })
+
+    var bgColor = AtomicBoolean(true)
+    private lateinit var mainLayout: ConstraintLayout
+
+    //dynamic broadcast receiver creation
+    private val broadcastReceiver: BroadcastReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            intent.getStringExtra("nonsense")?.let{
+
+                Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
+
+                if (bgColor.getAndSet(false))
+                    mainLayout.setBackgroundColor(Color.GREEN)
+                else {
+                    mainLayout.setBackgroundColor(Color.RED)
+                    bgColor.set(true)
+                }
+            }
+        }
+
+    }
 
     private lateinit var searchEditText : EditText
 
@@ -43,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         loadJikanFragment()
         Log.d("TAG_X", "${viewModel}")
 
+        mainLayout = findViewById(R.id.main_layout)
         searchEditText = findViewById(R.id.search_text_editText)
 
         jikanRecyclerView = findViewById(R.id.jikan_recyclerView)
@@ -82,6 +115,16 @@ class MainActivity : AppCompatActivity() {
         })
 
 //        viewModel.searchJikan("Goku")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        registerReceiver(broadcastReceiver, IntentFilter(Constants.FRAGMENT_BROADCAST_ACTION))
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(broadcastReceiver)
     }
 
     private fun loadJikanFragment() {
