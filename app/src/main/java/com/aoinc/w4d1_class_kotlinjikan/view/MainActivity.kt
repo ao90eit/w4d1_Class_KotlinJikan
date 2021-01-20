@@ -16,13 +16,16 @@ import com.aoinc.w4d1_class_kotlinjikan.R
 import com.aoinc.w4d1_class_kotlinjikan.model.JikanResult
 import com.aoinc.w4d1_class_kotlinjikan.view.adapter.JikanRecyclerViewAdapter
 import com.aoinc.w4d1_class_kotlinjikan.viewmodel.JikanViewModel
+import com.aoinc.w4d1_class_kotlinjikan.viewmodel.JikanViewModelFactory
 import org.w3c.dom.Text
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     //implementation "androidx.activity:activity-ktx:1.1.0"
-    private val viewModel: JikanViewModel by viewModels();
+    private val viewModel: JikanViewModel by viewModels<JikanViewModel>( factoryProducer = {
+        JikanViewModelFactory
+    })
 
     private lateinit var searchEditText : EditText
 
@@ -31,9 +34,14 @@ class MainActivity : AppCompatActivity() {
 
     private var searchTimer: Timer = Timer()
 
+    private val jikanFragment: JikanFragment = JikanFragment()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        loadJikanFragment()
+        Log.d("TAG_X", "${viewModel}")
 
         searchEditText = findViewById(R.id.search_text_editText)
 
@@ -74,5 +82,11 @@ class MainActivity : AppCompatActivity() {
         })
 
 //        viewModel.searchJikan("Goku")
+    }
+
+    private fun loadJikanFragment() {
+        supportFragmentManager.beginTransaction()
+                .add(R.id.jikan_fragment_frame, jikanFragment)
+                .commit()
     }
 }
