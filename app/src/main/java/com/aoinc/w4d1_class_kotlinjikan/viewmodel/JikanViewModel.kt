@@ -25,7 +25,7 @@ class JikanViewModel : ViewModel() {
                 .subscribe ({
                     if (it.isNotEmpty())
                         jikanLiveData.postValue(it)
-                    compositeDisposable.clear()
+                    compositeDisposable.clear() // clear after use, prevents emitted data leaks/multiple disposables
                 }, {
                     Log.d("TAG_X", it.localizedMessage)
                 })
